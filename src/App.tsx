@@ -1,25 +1,28 @@
 import { useState, useEffect } from "react";
-// import { collection, getDocs } from "firebase/firestore";
-// import { db } from "./firebase-config.ts";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./firebase-config.ts";
 
-// interface User {
-//   name: string
-// }
+interface User {
+  name: string,
+  id: number
+}
 
 function App() {
 
-  // const [users, setUsers] = useState([]);
-  // const usersRef = collection(db, "users");
+  const [users, setUsers] = useState([]);
+  const usersRef = collection(db, "users");
 
-  // useEffect(() => {
-  //   const getUsers = async () => {
-  //     const data = await getDocs(usersRef);
-  //     console.log(data)
-  //     setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-  //   }
+  useEffect(() => {
+    const getUsers = async () => {
+      const data = await getDocs(usersRef);
+      setUsers(data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id
+      })));
+    }
 
-  //   getUsers();
-  // }, []);
+    getUsers();
+  }, []);
 
   const [cat, setCat] = useState(null);
 
@@ -36,9 +39,11 @@ function App() {
 
   return (
     <>
-      {/* { users.map((user:User) => {
-        <h1>{user.name}</h1>
-      })} */}
+      { users.map((user:User) => {
+        return (
+          <h1 key={user.id}>{user.name}</h1>
+        );
+      })}
       <img src={cat} alt="cat" />
     </>
   )
