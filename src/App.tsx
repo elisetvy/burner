@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from "./firebase-config.ts";
 
 interface User {
@@ -56,13 +56,31 @@ function App() {
     } as User)));
   }
 
+  // Update a user in db
+  const updateUser = async (id:string, name:string) => {
+    const userDoc = doc(db, "users", id); // Create an instance of a doc
+    const capitalizedName = { name: name[0].toUpperCase() + name.slice(1)}
+
+    await updateDoc(userDoc, capitalizedName);
+
+    // Update users array
+    const data = await getDocs(usersRef);
+    setUsers(data.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id
+    } as User)));
+  }
+
   return (
     <>
       <input className="help" onChange={e => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
       <button className="HELP" onClick={addUser}>Add user</button>
       { users.map((user:User) => {
         return (
-          <h1 key={user.id}>{user.name}</h1>
+          <>
+            <h1 key={user.id}>{user.name}</h1>
+            <button className="HELP" onClick={() => updateUser(user.id, user.name)}>Capitalize name</button>
+          </>
         );
       })}
       <img src={cat || undefined} alt="cat" />
