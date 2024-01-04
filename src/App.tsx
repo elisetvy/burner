@@ -4,12 +4,12 @@ import { db } from "./firebase-config.ts";
 
 interface User {
   name: string,
-  id: number
+  id: string,
 }
 
 function App() {
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const usersRef = collection(db, "users");
 
   useEffect(() => {
@@ -18,13 +18,13 @@ function App() {
       setUsers(data.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id
-      })));
+      } as User)));
     }
 
     getUsers();
   }, []);
 
-  const [cat, setCat] = useState(null);
+  const [cat, setCat] = useState<string | null>(null);
 
   useEffect(() => {
     const getCat = async () => {
@@ -44,7 +44,7 @@ function App() {
           <h1 key={user.id}>{user.name}</h1>
         );
       })}
-      <img src={cat} alt="cat" />
+      <img src={cat || undefined} alt="cat" />
     </>
   )
 }
