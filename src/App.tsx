@@ -12,6 +12,7 @@ function App() {
   const [users, setUsers] = useState<User[]>([]);
   const usersRef = collection(db, "users");
 
+  // Get users on mount
   useEffect(() => {
     const getUsers = async () => {
       const data = await getDocs(usersRef);
@@ -26,6 +27,7 @@ function App() {
 
   const [cat, setCat] = useState<string | null>(null);
 
+  // Get a cat img on mount
   useEffect(() => {
     const getCat = async () => {
       const resp = await fetch("https://api.thecatapi.com/v1/images/search");
@@ -39,11 +41,14 @@ function App() {
 
   const [newUser, setNewUser] = useState<string>("");
 
+  // Add a user to db
   const addUser = async () => {
     await addDoc(usersRef, { name: newUser });
 
+    // Clear newUser state
     setNewUser("");
 
+    // Update users array
     const data = await getDocs(usersRef);
     setUsers(data.docs.map((doc) => ({
       ...doc.data(),
@@ -53,7 +58,7 @@ function App() {
 
   return (
     <>
-      <input className="help" onChange={(e) => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
+      <input className="help" onChange={e => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
       <button className="HELP" onClick={addUser}>Add user</button>
       { users.map((user:User) => {
         return (
