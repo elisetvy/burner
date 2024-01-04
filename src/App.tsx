@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "./firebase-config.ts";
 
 interface User {
@@ -37,8 +37,24 @@ function App() {
     getCat();
   }, [])
 
+  const [newUser, setNewUser] = useState<string>("");
+
+  const addUser = async () => {
+    await addDoc(usersRef, { name: newUser });
+
+    setNewUser("");
+
+    const data = await getDocs(usersRef);
+    setUsers(data.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id
+    } as User)));
+  }
+
   return (
     <>
+      <input className="help" onChange={(e) => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
+      <button className="HELP" onClick={addUser}>Add user</button>
       { users.map((user:User) => {
         return (
           <h1 key={user.id}>{user.name}</h1>
