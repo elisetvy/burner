@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { db } from "./firebase-config.ts";
 
 interface User {
@@ -71,6 +78,20 @@ function App() {
     } as User)));
   }
 
+  // Delete a user in db
+  const deleteUser = async (id:string) => {
+    const userDoc = doc(db, "users", id); // Create an instance of a doc
+
+    await deleteDoc(userDoc);
+
+    // Update users array
+    const data = await getDocs(usersRef);
+    setUsers(data.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id
+    } as User)));
+  }
+
   return (
     <>
       <input className="help" onChange={e => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
@@ -80,6 +101,7 @@ function App() {
           <>
             <h1 key={user.id}>{user.name}</h1>
             <button className="HELP" onClick={() => updateUser(user.id, user.name)}>Capitalize name</button>
+            <button className="HELP" onClick={() => deleteUser(user.id)}>Delete user</button>
           </>
         );
       })}
