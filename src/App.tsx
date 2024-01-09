@@ -15,27 +15,31 @@ import {
   signOut,
 } from "firebase/auth";
 
-interface User {
+interface Cat {
   name: string,
   id: string,
 }
 
+interface User {
+  email: string | null,
+}
+
 function App() {
 
-  const [users, setUsers] = useState<User[]>([]);
-  const usersRef = collection(db, "users");
+  const [cats, setCats] = useState<Cat[]>([]);
+  const catsRef = collection(db, "cats");
 
-  // Get users on mount
+  // Get cats on mount
   useEffect(() => {
-    const getUsers = async () => {
-      const data = await getDocs(usersRef);
-      setUsers(data.docs.map((doc) => ({
+    const getCats = async () => {
+      const data = await getDocs(catsRef);
+      setCats(data.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id
-      } as User)));
+      } as Cat)));
     }
 
-    getUsers();
+    getCats();
   }, []);
 
   const [cat, setCat] = useState<string | null>(null);
@@ -52,116 +56,121 @@ function App() {
     getCat();
   }, [])
 
-  const [newUser, setNewUser] = useState<string>("");
+  const [newCat, setNewCat] = useState<string>("");
 
-  // Add a user to db
-  const addUser = async () => {
-    await addDoc(usersRef, { name: newUser });
+  // Add a cat to db
+  const addCat = async () => {
+    await addDoc(catsRef, { name: newCat });
 
-    // Clear newUser state
-    setNewUser("");
+    // Clear newCat state
+    setNewCat("");
 
-    // Update users array
-    const data = await getDocs(usersRef);
-    setUsers(data.docs.map((doc) => ({
+    // Update cats array
+    const data = await getDocs(catsRef);
+    setCats(data.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id
-    } as User)));
+    } as Cat)));
   }
 
-  // Update a user in db
-  const updateUser = async (id:string, name:string) => {
-    const userDoc = doc(db, "users", id); // Create an instance of a doc
+  // Update a cat in db
+  const updateCat = async (id:string, name:string) => {
+    const userDoc = doc(db, "cats", id); // Create an instance of a doc
     const capitalizedName = { name: name[0].toUpperCase() + name.slice(1)}
 
     await updateDoc(userDoc, capitalizedName);
 
-    // Update users array
-    const data = await getDocs(usersRef);
-    setUsers(data.docs.map((doc) => ({
+    // Update cats array
+    const data = await getDocs(catsRef);
+    setCats(data.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id
-    } as User)));
+    } as Cat)));
   }
 
-  // Delete a user in db
-  const deleteUser = async (id:string) => {
+  // Delete a cat in db
+  const deleteCat = async (id:string) => {
     const userDoc = doc(db, "users", id); // Create an instance of a doc
 
     await deleteDoc(userDoc);
 
     // Update users array
-    const data = await getDocs(usersRef);
-    setUsers(data.docs.map((doc) => ({
+    const data = await getDocs(catsRef);
+    setCats(data.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id
-    } as User)));
+    } as Cat)));
   }
 
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [user, setUser] = useState({});
+  const [currUser, setCurrUser] = useState<User | null>({ email: null });
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      setCurrUser(currentUser);
     })}, [])
 
   const register = async () => {
     try {
       // Create user and log in
-      const user = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
+      await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
     } catch (err) {
-      console.log(err.message);
+      if (err instanceof Error) {
+        console.log(err.message);
+      }
     }
   }
 
   const login = async () => {
     try {
       // Log in user
-      const user = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
     } catch (err) {
-      console.log(err.message);
+      if (err instanceof Error) {
+        console.log(err.message);
+      }
     }
   }
 
   const logout = async () => {
+    // Sign out user
     await signOut(auth);
   }
 
   return (
     <>
-      <div className="HELP mb-10">
+      <div className="HELP">
         <h1>Register User</h1>
         <input placeholder="Email..." onChange={e => setRegisterEmail(e.target.value)} className="help"></input>
         <input placeholder="Password..." onChange={e => setRegisterPassword(e.target.value)} className="help"></input>
         <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={register}>Create User</button>
       </div>
-      <div className="HELP mb-10">
+      <div className="HELP">
         <h1>Login</h1>
         <input placeholder="Email..." onChange={e => setLoginEmail(e.target.value)} className="help"></input>
         <input placeholder="Password..." onChange={e => setLoginPassword(e.target.value)} className="help"></input>
         <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={login}>Log In</button>
       </div>
-      <div className="mb-96">
+      <div className="mb-20">
         <h4>User Logged In:</h4>
-        {user?.email}
+        {currUser?.email}
         <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={logout}>Sign Out</button>
       </div>
-      <input className="help" onChange={e => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
-      <button className="HELP" onClick={addUser}>Add user</button>
-      { users.map((user:User) => {
+      <input className="help" onChange={e => setNewCat(e.target.value)} placeholder="New user name..." value={newCat}></input>
+      <button className="HELP" onClick={addCat}>Add user</button>
+      { cats.map((user:Cat) => {
         return (
           <div key={user.id}>
             <h1>{user.name}</h1>
-            <button className="HELP" onClick={() => updateUser(user.id, user.name)}>Capitalize name</button>
-            <button className="HELP" onClick={() => deleteUser(user.id)}>Delete user</button>
+            <button className="HELP" onClick={() => updateCat(user.id, user.name)}>Capitalize name</button>
+            <button className="HELP" onClick={() => deleteCat(user.id)}>Delete user</button>
           </div>
         );
       })}
-      <img src={cat || undefined} alt="cat" />
+      <img className="h-48" src={cat || undefined} alt="cat" />
     </>
   )
 }
