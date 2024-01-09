@@ -8,7 +8,11 @@ import {
   doc,
 } from "firebase/firestore";
 import { db, auth } from "./firebase-config.ts";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
 
 interface User {
   name: string,
@@ -97,6 +101,11 @@ function App() {
   const [registerPassword, setRegisterPassword] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [user, setUser] = useState({});
+
+  // onAuthStateChanged(auth, (currentUser) => {
+  //   setUser(currentUser);
+  // })
 
   const register = async () => {
     try {
@@ -113,7 +122,7 @@ function App() {
   }
 
   const logout = async () => {
-
+    await signOut(auth);
   }
 
   return (
@@ -122,16 +131,19 @@ function App() {
         <h1>Register User</h1>
         <input placeholder="Email..." onChange={e => setRegisterEmail(e.target.value)} className="help"></input>
         <input placeholder="Password..." onChange={e => setRegisterPassword(e.target.value)} className="help"></input>
-        <button className="bg-sky-300 px-4 py-2" onClick={register}>Create User</button>
+        <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={register}>Create User</button>
       </div>
-      <div className="HELP mb-96">
+      <div className="HELP mb-10">
         <h1>Login</h1>
         <input placeholder="Email..." onChange={e => setLoginEmail(e.target.value)} className="help"></input>
         <input placeholder="Password..." onChange={e => setLoginPassword(e.target.value)} className="help"></input>
-        <button className="bg-sky-300 px-4 py-2">Login</button>
+        <button className="bg-sky-300 px-4 py-2 rounded-full">Log In</button>
       </div>
-      <h4>User Logged In:</h4>
-
+      <div className="mb-96">
+        <h4>User Logged In:</h4>
+        {/* {auth.currentUser.email} */}
+        <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={logout}>Sign Out</button>
+      </div>
       <input className="help" onChange={e => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
       <button className="HELP" onClick={addUser}>Add user</button>
       { users.map((user:User) => {
