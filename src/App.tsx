@@ -11,6 +11,7 @@ import { db, auth } from "./firebase-config.ts";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
 
@@ -103,22 +104,27 @@ function App() {
   const [loginPassword, setLoginPassword] = useState("");
   const [user, setUser] = useState({});
 
-  // onAuthStateChanged(auth, (currentUser) => {
-  //   setUser(currentUser);
-  // })
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    })}, [])
 
   const register = async () => {
     try {
       // Create user and log in
       const user = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
-      console.log(user)
     } catch (err) {
       console.log(err.message);
     }
   }
 
   const login = async () => {
-
+    try {
+      // Log in user
+      const user = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+    } catch (err) {
+      console.log(err.message);
+    }
   }
 
   const logout = async () => {
@@ -137,22 +143,22 @@ function App() {
         <h1>Login</h1>
         <input placeholder="Email..." onChange={e => setLoginEmail(e.target.value)} className="help"></input>
         <input placeholder="Password..." onChange={e => setLoginPassword(e.target.value)} className="help"></input>
-        <button className="bg-sky-300 px-4 py-2 rounded-full">Log In</button>
+        <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={login}>Log In</button>
       </div>
       <div className="mb-96">
         <h4>User Logged In:</h4>
-        {/* {auth.currentUser.email} */}
+        {user?.email}
         <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={logout}>Sign Out</button>
       </div>
       <input className="help" onChange={e => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
       <button className="HELP" onClick={addUser}>Add user</button>
       { users.map((user:User) => {
         return (
-          <>
-            <h1 key={user.id}>{user.name}</h1>
+          <div key={user.id}>
+            <h1>{user.name}</h1>
             <button className="HELP" onClick={() => updateUser(user.id, user.name)}>Capitalize name</button>
             <button className="HELP" onClick={() => deleteUser(user.id)}>Delete user</button>
-          </>
+          </div>
         );
       })}
       <img src={cat || undefined} alt="cat" />
