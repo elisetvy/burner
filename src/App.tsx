@@ -7,7 +7,8 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "./firebase-config.ts";
+import { db, auth } from "./firebase-config.ts";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 interface User {
   name: string,
@@ -92,8 +93,45 @@ function App() {
     } as User)));
   }
 
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  const register = async () => {
+    try {
+      // Create user and log in
+      const user = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
+      console.log(user)
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  const login = async () => {
+
+  }
+
+  const logout = async () => {
+
+  }
+
   return (
     <>
+      <div className="HELP mb-10">
+        <h1>Register User</h1>
+        <input placeholder="Email..." onChange={e => setRegisterEmail(e.target.value)} className="help"></input>
+        <input placeholder="Password..." onChange={e => setRegisterPassword(e.target.value)} className="help"></input>
+        <button className="bg-sky-300 px-4 py-2" onClick={register}>Create User</button>
+      </div>
+      <div className="HELP mb-96">
+        <h1>Login</h1>
+        <input placeholder="Email..." onChange={e => setLoginEmail(e.target.value)} className="help"></input>
+        <input placeholder="Password..." onChange={e => setLoginPassword(e.target.value)} className="help"></input>
+        <button className="bg-sky-300 px-4 py-2">Login</button>
+      </div>
+      <h4>User Logged In:</h4>
+
       <input className="help" onChange={e => setNewUser(e.target.value)} placeholder="New user name..." value={newUser}></input>
       <button className="HELP" onClick={addUser}>Add user</button>
       { users.map((user:User) => {
