@@ -7,13 +7,15 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db, auth } from "./firebase-config.ts";
+import { db, auth, storage } from "./firebase-config.ts";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
+import { ref, uploadBytes } from "firebase/storage";
+import { v4 as uuid } from "uuid";
 
 interface Cat {
   name: string,
@@ -25,7 +27,6 @@ interface User {
 }
 
 function App() {
-
   const [cats, setCats] = useState<Cat[]>([]);
   const catsRef = collection(db, "cats");
 
@@ -94,7 +95,7 @@ function App() {
 
     await deleteDoc(userDoc);
 
-    // Update users array
+    // Update cats array
     const data = await getDocs(catsRef);
     setCats(data.docs.map((doc) => ({
       ...doc.data(),
@@ -140,8 +141,28 @@ function App() {
     await signOut(auth);
   }
 
+  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
+
+  const upload = () => {
+    if (image === null) return;
+
+    const imageRef = ref(storage, `images/${uuid() + image.name}`);
+    uploadBytes(imageRef, image).then(() => {
+      alert("Image uploaded!");
+    })
+  }
+
+  useEffect(() => {
+
+  })
+
   return (
     <>
+      <div className="HELP mb-20">
+        <input type="file" onChange={e => setImage(e.target.files[0])}></input>
+        <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={upload}>Upload file</button>
+      </div>
       <div className="HELP">
         <h1>Register User</h1>
         <input placeholder="Email..." onChange={e => setRegisterEmail(e.target.value)} className="help"></input>
