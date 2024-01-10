@@ -14,7 +14,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 import { v4 as uuid } from "uuid";
 
 interface Cat {
@@ -143,25 +143,38 @@ function App() {
 
   const [image, setImage] = useState(null);
   const [images, setImages] = useState([]);
+  const imagesRef = ref(storage, "images/")
 
   const upload = () => {
     if (image === null) return;
 
     const imageRef = ref(storage, `images/${uuid() + image.name}`);
-    uploadBytes(imageRef, image).then(() => {
-      alert("Image uploaded!");
+    uploadBytes(imageRef, image).then(snapshot => {
+      getDownloadURL(snapshot.ref).then(url => {
+        setImages(prev => [...prev, url]);
+      })
     })
   }
 
+  // Get images on mount
   useEffect(() => {
-
-  })
+    listAll(imagesRef).then((resp) => {
+      resp.items.forEach(item => {
+        getDownloadURL(item).then(url => {
+          setImages(prev => [...prev, url]);
+        })
+      })
+    })
+  }, []);
 
   return (
     <>
       <div className="HELP mb-20">
         <input type="file" onChange={e => setImage(e.target.files[0])}></input>
         <button className="bg-sky-300 px-4 py-2 rounded-full" onClick={upload}>Upload file</button>
+        {images.map(url => {
+          return <img className="h-48" src={url} />
+        })}
       </div>
       <div className="HELP">
         <h1>Register User</h1>
