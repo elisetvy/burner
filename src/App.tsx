@@ -193,20 +193,58 @@ function App() {
     });
   }, []);
 
+  const [tableOne, setTableOne] = useState({
+    one: "",
+    five: "",
+    six: "",
+    nine: "",
+  });
+  const [tableOneAnswers, setTableOneAnswers] = useState({
+    one: "6",
+    five: "5",
+    six: "4",
+    nine: "2",
+  });
+
+  function handleChange(e, num) {
+    setTableOne((prev) => ({ ...prev, [num]: e.target.value }));
+  }
+
+  const [gameStatus, setGameStatus] = useState(null);
+
+  function handleSubmit(e) {
+    let gameLost = false;
+
+    for (const key in tableOne) {
+      if (tableOne[key] !== tableOneAnswers[key]) {
+        gameLost = true;
+
+        break;
+      }
+    }
+
+    gameLost === true ? setGameStatus("lose") : setGameStatus("win");
+  }
+
   return (
     <>
       <div className="flex">
         <table className="help">
           <tr className="flex">
-            <td className="help h-12 w-12 flex justify-center items-center hover:bg-green-100">
+            <td
+              className={`help h-12 w-12 flex justify-center items-center ${
+                tableOne.one === tableOneAnswers.one ? "bg-blue-200" : "bg-none"
+              }`}
+            >
               <input
-                onChange={(e) =>
-                  e.target.value === "6"
-                    ? console.log("yay")
-                    : console.log("shit")
-                }
-                className="h-full w-full text-center focus:outline-none hover:bg-green-100"
+                onChange={(e) => handleChange(e, "one")}
+                className={`h-full w-full text-center focus:outline-none ${
+                  tableOne.one === tableOneAnswers.one
+                    ? "bg-blue-200"
+                    : "bg-none"
+                }`}
                 type="text"
+                value={tableOne.one}
               ></input>
             </td>
             <td className="help h-12 w-12 flex justify-center items-center">
@@ -220,8 +258,40 @@ function App() {
             <td className="help h-12 w-12 flex justify-center items-center">
               3
             </td>
-            <td className="help h-12 w-12 flex justify-center items-center"></td>
-            <td className="help h-12 w-12 flex justify-center items-center"></td>
+            <td
+              className={`help h-12 w-12 flex justify-center items-center ${
+                tableOne.five === tableOneAnswers.five
+                  ? "bg-blue-200"
+                  : "bg-none"
+              }`}
+            >
+              <input
+                onChange={(e) => handleChange(e, "five")}
+                className={`h-full w-full text-center focus:outline-none ${
+                  tableOne.five === tableOneAnswers.five
+                    ? "bg-blue-200"
+                    : "bg-none"
+                }`}
+                type="text"
+                value={tableOne.five}
+              ></input>
+            </td>
+            <td
+              className={`help h-12 w-12 flex justify-center items-center ${
+                tableOne.six === tableOneAnswers.six ? "bg-blue-200" : "bg-none"
+              }`}
+            >
+              <input
+                onChange={(e) => handleChange(e, "six")}
+                className={`h-full w-full text-center focus:outline-none ${
+                  tableOne.six === tableOneAnswers.six
+                    ? "bg-blue-200"
+                    : "bg-none"
+                }`}
+                type="text"
+                value={tableOne.six}
+              ></input>
+            </td>
           </tr>
           <tr className="flex">
             <td className="help h-12 w-12 flex justify-center items-center">
@@ -230,10 +300,27 @@ function App() {
             <td className="help h-12 w-12 flex justify-center items-center">
               1
             </td>
-            <td className="help h-12 w-12 flex justify-center items-center"></td>
+            <td
+              className={`help h-12 w-12 flex justify-center items-center ${
+                tableOne.nine === tableOneAnswers.nine
+                  ? "bg-blue-200"
+                  : "bg-none"
+              }`}
+            >
+              <input
+                onChange={(e) => handleChange(e, "nine")}
+                className={`h-full w-full text-center focus:outline-none ${
+                  tableOne.nine === tableOneAnswers.nine
+                    ? "bg-blue-200"
+                    : "bg-none"
+                }`}
+                type="text"
+                value={tableOne.nine}
+              ></input>
+            </td>
           </tr>
         </table>
-        <table className="help">
+        {/* <table className="help">
           <tr className="flex">
             <td className="help h-12 w-12 flex justify-center items-center"></td>
             <td className="help h-12 w-12 flex justify-center items-center"></td>
@@ -450,8 +537,20 @@ function App() {
               0
             </td>
           </tr>
-        </table>
+        </table> */}
       </div>
+      {gameStatus === "lose" && (
+        <div className="text-red-400">FUK!!!!!!!!!</div>
+      )}
+      {gameStatus === "win" && (
+        <div className="text-green-800">FUK YEAH!!!!!!!!!</div>
+      )}
+      <button
+        className="mt-4 mb-96 bg-sky-300 px-4 py-2 rounded-full"
+        onClick={handleSubmit}
+      >
+        Submit
+      </button>
       <div className="HELP mb-20">
         <input
           type="file"
