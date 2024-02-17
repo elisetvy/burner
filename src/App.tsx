@@ -231,18 +231,10 @@ function App() {
       <div className="flex">
         <table className="help">
           <tr className="flex">
-            <td
-              className={`help h-12 w-12 flex justify-center items-center ${
-                tableOne.one === tableOneAnswers.one ? "bg-blue-200" : "bg-none"
-              }`}
-            >
+            <td className="help h-12 w-12 flex justify-center items-center">
               <input
                 onChange={(e) => handleChange(e, "one")}
-                className={`h-full w-full text-center focus:outline-none ${
-                  tableOne.one === tableOneAnswers.one
-                    ? "bg-blue-200"
-                    : "bg-none"
-                }`}
+                className="h-full w-full text-center focus:outline-none"
                 type="text"
                 value={tableOne.one}
               ></input>
@@ -258,36 +250,18 @@ function App() {
             <td className="help h-12 w-12 flex justify-center items-center">
               3
             </td>
-            <td
-              className={`help h-12 w-12 flex justify-center items-center ${
-                tableOne.five === tableOneAnswers.five
-                  ? "bg-blue-200"
-                  : "bg-none"
-              }`}
-            >
+            <td className="help h-12 w-12 flex justify-center items-center">
               <input
                 onChange={(e) => handleChange(e, "five")}
-                className={`h-full w-full text-center focus:outline-none ${
-                  tableOne.five === tableOneAnswers.five
-                    ? "bg-blue-200"
-                    : "bg-none"
-                }`}
+                className="h-full w-full text-center focus:outline-none"
                 type="text"
                 value={tableOne.five}
               ></input>
             </td>
-            <td
-              className={`help h-12 w-12 flex justify-center items-center ${
-                tableOne.six === tableOneAnswers.six ? "bg-blue-200" : "bg-none"
-              }`}
-            >
+            <td className="help h-12 w-12 flex justify-center items-center">
               <input
                 onChange={(e) => handleChange(e, "six")}
-                className={`h-full w-full text-center focus:outline-none ${
-                  tableOne.six === tableOneAnswers.six
-                    ? "bg-blue-200"
-                    : "bg-none"
-                }`}
+                className="h-full w-full text-center focus:outline-none"
                 type="text"
                 value={tableOne.six}
               ></input>
@@ -300,20 +274,10 @@ function App() {
             <td className="help h-12 w-12 flex justify-center items-center">
               1
             </td>
-            <td
-              className={`help h-12 w-12 flex justify-center items-center ${
-                tableOne.nine === tableOneAnswers.nine
-                  ? "bg-blue-200"
-                  : "bg-none"
-              }`}
-            >
+            <td className="help h-12 w-12 flex justify-center items-center">
               <input
                 onChange={(e) => handleChange(e, "nine")}
-                className={`h-full w-full text-center focus:outline-none ${
-                  tableOne.nine === tableOneAnswers.nine
-                    ? "bg-blue-200"
-                    : "bg-none"
-                }`}
+                className="h-full w-full text-center focus:outline-none"
                 type="text"
                 value={tableOne.nine}
               ></input>
